@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cafe {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  description   String?   @db.Text
+  
+  // Location data
+  address       String
+  city          String
+  area          String?
+  postcode      String
+  latitude      Float
+  longitude     Float
+  
+  // Contact information
+  phone         String?
+  website       String?
+  email         String?
+  
+  // Features and amenities
+  amenities     String[]  // WiFi, Parking, Outdoor Seating, etc.
+  features      String[]  // Breakfast, Brunch, Vegan Options, etc.
+  
+  // Opening hours stored as JSON
+  openingHours  Json?     // { monday: { open: "08:00", close: "18:00" }, ... }
+  
+  // Additional information
+  priceRange    String?   // $, $$, $$$, $$$$
+  rating        Float?    @default(0)
+  reviewCount   Int       @default(0)
+  
+  // Images
+  thumbnail     String?
+  images        String[]
+  
+  // SEO
+  metaTitle     String?
+  metaDescription String? @db.Text
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  reviews       Review[]
+  favorites     Favorite[]
+  
+  // Indexes for better search performance
+  @@index([postcode])
+  @@index([city])
+  @@index([area])
+  @@index([latitude, longitude])
+  @@index([slug])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  
+  authorName String
+  authorEmail String?
+  rating    Int      // 1-5
+  comment   String?  @db.Text
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([cafeId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  
+  userId    String   // Can be localStorage ID or authenticated user ID
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([cafeId, userId])
+  @@index([userId])
+}
+
+model ImportLog {
+  id          String   @id @default(cuid())
+  filename    String
+  status      String   // success, partial, failed
+  rowsTotal   Int
+  rowsSuccess Int
+  rowsFailed  Int
+  errors      Json?    // Array of error messages
+  
+  createdAt   DateTime @default(now())
+}
