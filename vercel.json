@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "regions": ["lhr1"],
+  "env": {
+    "DATABASE_URL": "@database-url",
+    "NEXT_PUBLIC_APP_URL": "@app-url"
+  },
+  "build": {
+    "env": {
+      "DATABASE_URL": "@database-url"
+    }
+  }
+}
