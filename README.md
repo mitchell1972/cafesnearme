@@ -6,10 +6,19 @@ A modern, responsive, SEO-optimized cafe directory website built with Next.js 14
 
 ### Core Functionality
 - **Advanced Search**: Search cafes by name, location, postcode with real-time results
+- **Postcode Geocoding**: Automatic conversion of UK postcodes (CO1, CB1, etc.) to coordinates
 - **Geolocation**: "Near me" functionality using browser geolocation API
-- **Distance Calculation**: Shows distance to cafes using Haversine formula
-- **Filters**: Filter by distance, amenities (WiFi, parking), features, and "open now"
-- **Data Import**: Import cafe data from CSV/Excel files through admin interface
+- **Distance Calculation**: Shows distance to cafes using Haversine formula (displays in miles)
+- **Smart Filters**: 
+  - Distance radius: Within 1, 5, 10, or 20 miles
+  - "Open Now" toggle with real-time checking
+  - Amenities: WiFi, Parking, Outdoor Seating, Wheelchair Accessible, Dog Friendly
+  - Features: Breakfast, Brunch, Lunch, Vegan Options, Gluten Free, Organic Coffee
+- **Data Import**: 
+  - Import from CSV/Excel files through admin interface
+  - Support for Outscraper format and custom formats
+  - Drag & drop interface available
+  - Automatic field mapping and validation
 
 ### SEO Optimization
 - **Programmatic SEO Pages**: Auto-generated pages for cities, areas, and categories
@@ -44,7 +53,8 @@ A modern, responsive, SEO-optimized cafe directory website built with Next.js 14
 
 1. Clone the repository:
 ```bash
-cd Cafesnearme
+git clone https://github.com/mitchell1972/cafesnearme.git
+cd cafesnearme
 ```
 
 2. Install dependencies:
@@ -52,7 +62,17 @@ cd Cafesnearme
 npm install
 ```
 
-3. Set up environment variables:
+3. Quick Setup (PostgreSQL):
+```bash
+./setup-postgres.sh
+```
+This script will:
+- Check for PostgreSQL installation
+- Create the cafesnearme database
+- Set up the .env file with DATABASE_URL
+- Run Prisma migrations
+
+Or manually set up environment variables:
 Create a `.env` file in the root directory:
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/cafesnearme?schema=public"
@@ -61,7 +81,7 @@ GOOGLE_MAPS_API_KEY="" # Optional for geocoding
 NEXT_PUBLIC_MAPBOX_TOKEN="" # Optional for maps
 ```
 
-4. Set up the database:
+4. Set up the database (if not using quick setup):
 ```bash
 npx prisma db push
 npx prisma generate
@@ -75,6 +95,21 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## Data Import
+
+### Import via Admin Interface:
+
+1. Navigate to the admin import page:
+   - Standard import: `http://localhost:3000/admin/import`
+   - Drag & drop import: `http://localhost:3000/admin/import-drag`
+
+2. Supported formats:
+   - CSV files with standard columns
+   - Excel files (.xlsx) including Outscraper exports
+   - Automatic field mapping for common column names
+
+3. Required fields:
+   - name, address or full_address, postcode or postal_code
+   - Optional: latitude/longitude (will use default if missing)
 
 ### Import cafe data via API:
 
