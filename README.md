@@ -1,5 +1,8 @@
 # Cafes Near Me - SEO-Optimized Local Cafe Directory
 
+[![Deploy to Vercel](https://github.com/mitchell1972/cafesnearme/actions/workflows/deploy.yml/badge.svg)](https://github.com/mitchell1972/cafesnearme/actions/workflows/deploy.yml)
+[![CI](https://github.com/mitchell1972/cafesnearme/actions/workflows/ci.yml/badge.svg)](https://github.com/mitchell1972/cafesnearme/actions/workflows/ci.yml)
+
 A modern, responsive, SEO-optimized cafe directory website built with Next.js 14+, TypeScript, and Tailwind CSS.
 
 ## Features
