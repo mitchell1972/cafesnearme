@@ -1,0 +1,31 @@
+name: Manual Deploy Trigger
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Echo deployment info
+        run: |
+          echo "Deploying to ${{ inputs.environment }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          
+      - name: Trigger deployment
+        run: echo "This workflow can be manually triggered from GitHub Actions tab"
