@@ -179,7 +179,7 @@ export default async function CafePage({ params }: PageProps) {
               <div className="bg-white rounded-lg overflow-hidden shadow-sm">
                 {cafe.images && cafe.images.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
-                    {cafe.images.slice(0, 4).map((image, index) => (
+                    {cafe.images.slice(0, 4).map((image: string, index: number) => (
                       <div key={index} className="relative h-64">
                         <Image
                           src={image}
@@ -263,7 +263,7 @@ export default async function CafePage({ params }: PageProps) {
                     <div>
                       <h3 className="font-semibold text-lg mb-3">Amenities</h3>
                       <div className="flex flex-wrap gap-3">
-                        {cafe.amenities.map((amenity) => (
+                        {cafe.amenities.map((amenity: string) => (
                           <div
                             key={amenity}
                             className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2"
@@ -281,7 +281,7 @@ export default async function CafePage({ params }: PageProps) {
                     <div>
                       <h3 className="font-semibold text-lg mb-3">Features</h3>
                       <div className="flex flex-wrap gap-2">
-                        {cafe.features.map((feature) => (
+                        {cafe.features.map((feature: string) => (
                           <span
                             key={feature}
                             className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm"
@@ -329,7 +329,7 @@ export default async function CafePage({ params }: PageProps) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {cafe.reviews.map((review) => (
+                      {cafe.reviews.map((review: any) => (
                         <div key={review.id} className="border-b pb-4 last:border-0">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="flex">
