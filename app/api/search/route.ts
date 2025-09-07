@@ -79,23 +79,23 @@ export async function GET(request: NextRequest) {
     // Calculate distances and filter by radius
     if (!isNaN(lat) && !isNaN(lng)) {
       cafesWithDistance = cafes
-        .map(cafe => ({
+        .map((cafe: any) => ({
           ...cafe,
           distance: calculateDistance(
             { latitude: lat, longitude: lng },
             { latitude: cafe.latitude, longitude: cafe.longitude }
           ),
         }))
-        .filter(cafe => cafe.distance <= radius)
-        .sort((a, b) => a.distance - b.distance)
+        .filter((cafe: any) => cafe.distance <= radius)
+        .sort((a: any, b: any) => a.distance - b.distance)
     } else {
-      cafesWithDistance = cafes.map(cafe => ({ ...cafe, distance: null }))
+      cafesWithDistance = cafes.map((cafe: any) => ({ ...cafe, distance: null }))
     }
 
     // Filter by open now
     if (openNow) {
       const { isOpenNow } = await import('@/lib/utils')
-      cafesWithDistance = cafesWithDistance.filter(cafe => {
+      cafesWithDistance = cafesWithDistance.filter((cafe: any) => {
         const openStatus = isOpenNow(cafe.openingHours)
         // Only include cafes that are definitively open (not null/no data)
         return openStatus === true
