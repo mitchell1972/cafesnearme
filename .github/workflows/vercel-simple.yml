@@ -12,6 +12,7 @@ on:
 jobs:
   Deploy:
     runs-on: ubuntu-latest
+    environment: production  # Use production environment secrets
     steps:
       - name: Checkout
         uses: actions/checkout@v4
