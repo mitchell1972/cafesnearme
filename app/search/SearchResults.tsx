@@ -62,15 +62,6 @@ export function SearchResults() {
   })
   const [showFilters, setShowFilters] = useState(false)
 
-  useEffect(() => {
-    fetchCafes(true)
-  }, [searchParams, fetchCafes])
-
-  // Apply filters immediately when openNow or radius changes
-  useEffect(() => {
-    fetchCafes(true)
-  }, [filters.openNow, filters.radius, fetchCafes])
-
   const fetchCafes = useCallback(async (reset = false) => {
     try {
       setLoading(true)
@@ -115,6 +106,15 @@ export function SearchResults() {
       setLoading(false)
     }
   }, [offset, searchParams, filters.openNow, filters.radius, filters.amenities, filters.features])
+
+  useEffect(() => {
+    fetchCafes(true)
+  }, [searchParams, fetchCafes])
+
+  // Apply filters immediately when openNow or radius changes
+  useEffect(() => {
+    fetchCafes(true)
+  }, [filters.openNow, filters.radius, fetchCafes])
 
   const handleFilterChange = (key: string, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }))
