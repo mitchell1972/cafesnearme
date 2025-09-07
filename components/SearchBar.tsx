@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Search, MapPin, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { debounce, requestLocationPermission } from '@/lib/utils'
+import { requestLocationPermission } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 interface SearchBarProps {
@@ -51,10 +51,16 @@ export function SearchBar({
     }
   }, [location, onSearch, router])
 
-  const debouncedSearch = useCallback(
-    debounce((value: string) => performSearch(value), 500),
-    [performSearch]
-  )
+  const timeoutRef = useRef<NodeJS.Timeout>()
+
+  const debouncedSearch = useCallback((value: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    timeoutRef.current = setTimeout(() => {
+      performSearch(value)
+    }, 500)
+  }, [performSearch])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value

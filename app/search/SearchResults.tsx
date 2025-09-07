@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { CafeCard } from '@/components/CafeCard'
 import { CafeCardSkeleton } from '@/components/CafeCardSkeleton'
@@ -64,14 +64,14 @@ export function SearchResults() {
 
   useEffect(() => {
     fetchCafes(true)
-  }, [searchParams])
+  }, [searchParams, fetchCafes])
 
   // Apply filters immediately when openNow or radius changes
   useEffect(() => {
     fetchCafes(true)
-  }, [filters.openNow, filters.radius])
+  }, [filters.openNow, filters.radius, fetchCafes])
 
-  const fetchCafes = async (reset = false) => {
+  const fetchCafes = useCallback(async (reset = false) => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -114,7 +114,7 @@ export function SearchResults() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [offset, searchParams, filters.openNow, filters.radius, filters.amenities, filters.features])
 
   const handleFilterChange = (key: string, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }))
