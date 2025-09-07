@@ -1,11 +1,17 @@
 // Conditionally import PrismaClient to avoid errors when DATABASE_URL is not set
 let PrismaClient: any
 
-try {
-  const prismaModule = require('@prisma/client')
-  PrismaClient = prismaModule.PrismaClient
-} catch (error) {
-  console.warn('Prisma Client not available - database may not be configured')
+// Only import Prisma on the server side
+if (typeof window === 'undefined') {
+  try {
+    const prismaModule = require('@prisma/client')
+    PrismaClient = prismaModule.PrismaClient
+  } catch (error) {
+    console.warn('Prisma Client not available - database may not be configured')
+    PrismaClient = null
+  }
+} else {
+  // On client side, set to null to prevent bundling
   PrismaClient = null
 }
 
