@@ -12,8 +12,10 @@ export async function GET(request: NextRequest) {
     let lng = parseFloat(searchParams.get('lng') || '')
     const radius = parseFloat(searchParams.get('radius') || '10')
     const openNow = searchParams.get('openNow') === 'true'
-    const amenities = searchParams.get('amenities')?.split(',').filter(Boolean) || []
-    const features = searchParams.get('features')?.split(',').filter(Boolean) || []
+    const amenitiesParam = searchParams.get('amenities')
+    const featuresParam = searchParams.get('features')
+    const amenities = amenitiesParam ? amenitiesParam.split(',').filter(Boolean) : []
+    const features = featuresParam ? featuresParam.split(',').filter(Boolean) : []
     const limit = parseInt(searchParams.get('limit') || '20')
     const offset = parseInt(searchParams.get('offset') || '0')
     

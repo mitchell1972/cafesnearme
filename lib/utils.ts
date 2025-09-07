@@ -92,8 +92,8 @@ export function formatPriceRange(priceRange: string | null): string {
 /**
  * Format array of amenities for display
  */
-export function formatAmenities(amenities: string[]): string {
-  if (!amenities || amenities.length === 0) return ''
+export function formatAmenities(amenities: string[] | null | undefined): string {
+  if (!amenities || !Array.isArray(amenities) || amenities.length === 0) return ''
   return amenities.join(' • ')
 }
 
