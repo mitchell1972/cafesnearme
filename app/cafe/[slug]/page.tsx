@@ -59,7 +59,7 @@ export async function generateStaticParams() {
       take: 100, // Generate static pages for top 100 cafes
     })
 
-    return cafes.map((cafe) => ({
+    return cafes.map((cafe: any) => ({
       slug: cafe.slug,
     }))
   } catch (error) {

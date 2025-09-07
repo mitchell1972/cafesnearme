@@ -62,7 +62,7 @@ export async function generateStaticParams() {
       take: 50, // Pre-generate pages for top 50 cities
     })
 
-    return cities.map((city) => ({
+    return cities.map((city: any) => ({
       city: city.city.toLowerCase().replace(/\s+/g, '-'),
     }))
   } catch (error) {
