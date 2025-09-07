@@ -70,21 +70,36 @@ export async function generateStaticParams() {
 }
 
 export default async function CafePage({ params }: PageProps) {
-  const cafe = await prisma.cafe.findUnique({
-    where: { slug: params.slug },
-    include: {
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        take: 10,
-      },
-      _count: {
-        select: {
-          reviews: true,
-          favorites: true,
+  let cafe: any = null
+  
+  try {
+    cafe = await prisma.cafe.findUnique({
+      where: { slug: params.slug },
+      include: {
+        reviews: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+        },
+        _count: {
+          select: {
+            reviews: true,
+            favorites: true,
+          },
         },
       },
-    },
-  })
+    })
+  } catch (error) {
+    console.log('Unable to fetch cafe data - database not available')
+    // Return a minimal page instead of throwing error
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <h1 className="text-2xl font-bold mb-4">Unable to load cafe data</h1>
+          <p>Please check back later or contact support if the issue persists.</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!cafe) {
     notFound()

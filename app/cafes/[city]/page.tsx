@@ -75,52 +75,65 @@ export async function generateStaticParams() {
 export default async function CityPage({ params }: PageProps) {
   const cityName = params.city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   
-  const [cafes, areas, totalCount] = await Promise.all([
-    prisma.cafe.findMany({
-      where: {
-        city: {
-          equals: cityName,
-          mode: 'insensitive',
-        },
-      },
-      orderBy: [
-        { rating: 'desc' },
-        { reviewCount: 'desc' },
-      ],
-      take: 24,
-    }),
-    prisma.cafe.groupBy({
-      by: ['area'],
-      where: {
-        city: {
-          equals: cityName,
-          mode: 'insensitive',
-        },
-        area: {
-          not: null,
-        },
-      },
-      _count: {
-        area: true,
-      },
-      orderBy: {
-        _count: {
-          area: 'desc',
-        },
-      },
-    }),
-    prisma.cafe.count({
-      where: {
-        city: {
-          equals: cityName,
-          mode: 'insensitive',
-        },
-      },
-    }),
-  ])
+  let cafes: any[] = []
+  let areas: any[] = []
+  let totalCount = 0
 
-  if (cafes.length === 0) {
-    notFound()
+  try {
+    const results = await Promise.all([
+      prisma.cafe.findMany({
+        where: {
+          city: {
+            equals: cityName,
+            mode: 'insensitive',
+          },
+        },
+        orderBy: [
+          { rating: 'desc' },
+          { reviewCount: 'desc' },
+        ],
+        take: 24,
+      }),
+      prisma.cafe.groupBy({
+        by: ['area'],
+        where: {
+          city: {
+            equals: cityName,
+            mode: 'insensitive',
+          },
+          area: {
+            not: null,
+          },
+        },
+        _count: {
+          area: true,
+        },
+        orderBy: {
+          _count: {
+            area: 'desc',
+          },
+        },
+      }),
+      prisma.cafe.count({
+        where: {
+          city: {
+            equals: cityName,
+            mode: 'insensitive',
+          },
+        },
+      }),
+    ])
+
+    cafes = results[0]
+    areas = results[1]
+    totalCount = results[2]
+  } catch (error) {
+    console.log('Unable to fetch city data - database not available')
+  }
+
+  if (cafes.length === 0 && totalCount === 0) {
+    // Only show not found if we're sure there's no data (not just a database error)
+    // For now, show the page with empty data
   }
 
   const breadcrumbStructuredData = generateBreadcrumbStructuredData([
