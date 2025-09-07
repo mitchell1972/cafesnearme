@@ -273,7 +273,9 @@ export default async function CafePage({ params }: PageProps) {
                       <h3 className="font-semibold text-lg mb-3">Opening Hours</h3>
                       <div className="space-y-2">
                         {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-                          const hours = cafe.openingHours?.[day]
+                          const hours = typeof cafe.openingHours === 'object' && cafe.openingHours !== null 
+                            ? (cafe.openingHours as Record<string, any>)[day]
+                            : null
                           const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
                           const currentDay = dayNames[new Date().getDay()].toLowerCase()
                           const isToday = currentDay === day

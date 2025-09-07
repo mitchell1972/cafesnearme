@@ -56,7 +56,8 @@ export async function importFromCSV(fileContent: string): Promise<ImportResult> 
         errors.push(`CSV parsing error: ${err.message}`)
       })
       .on('end', async () => {
-        for (const [index, row] of rows.entries()) {
+        for (let index = 0; index < rows.length; index++) {
+          const row = rows[index]
           try {
             await importCafe(row)
             successCount++
@@ -155,7 +156,8 @@ export async function importFromExcel(buffer: Buffer): Promise<ImportResult> {
       }
     }
 
-    for (const [index, row] of data.entries()) {
+    for (let index = 0; index < data.length; index++) {
+      const row = data[index]
       try {
         const parsedRow = parseRow(row)
         

@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       
       if (data.length > 0) {
         allData = allData.concat(data)
-        const columns = Object.keys(data[0])
+        const columns = Object.keys(data[0] as Record<string, any>)
         errors.push(`Sheet ${sheetName}: Found ${data.length} rows with ${columns.length} columns`)
         
         // Log first row for debugging
@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
     let successCount = 0
     let failedCount = 0
     
-    for (const [index, row] of allData.entries()) {
+    for (let index = 0; index < allData.length; index++) {
+      const row = allData[index]
       try {
         // Map Outscraper fields to our schema
         const cafe = {
