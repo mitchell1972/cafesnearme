@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { Coffee, MapPin, Clock, Wifi } from 'lucide-react'
+import { Cafe } from '@prisma/client'
 
 export default async function HomePage() {
   // Get featured cafes for the home page
-  let featuredCafes = []
-  let popularCities = []
+  let featuredCafes: Cafe[] = []
+  let popularCities: { city: string; _count: { city: number } }[] = []
   
   try {
     featuredCafes = await prisma.cafe.findMany({
@@ -23,7 +24,7 @@ export default async function HomePage() {
     })
 
     // Get popular cities for SEO
-    popularCities = await prisma.cafe.groupBy({
+    const groupByResult = await prisma.cafe.groupBy({
       by: ['city'],
       _count: {
         city: true,
@@ -35,6 +36,7 @@ export default async function HomePage() {
       },
       take: 8,
     })
+    popularCities = groupByResult
   } catch (error) {
     console.log('Unable to fetch data - database not available')
   }

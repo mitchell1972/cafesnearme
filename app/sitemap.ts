@@ -4,9 +4,9 @@ import { prisma } from '@/lib/prisma'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://example.com'
 
-  let cafes = []
-  let cities = []
-  let areas = []
+  let cafes: { slug: string; updatedAt: Date }[] = []
+  let cities: { city: string }[] = []
+  let areas: { city: string; area: string | null }[] = []
 
   try {
     // Get all cafes
@@ -18,15 +18,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
 
     // Get all unique cities
-    cities = await prisma.cafe.groupBy({
+    const citiesResult = await prisma.cafe.groupBy({
       by: ['city'],
       _count: {
         city: true,
       },
     })
+    cities = citiesResult
 
     // Get all unique areas
-    areas = await prisma.cafe.groupBy({
+    const areasResult = await prisma.cafe.groupBy({
       by: ['city', 'area'],
       where: {
         area: {
@@ -34,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
       },
     })
+    areas = areasResult
   } catch (error) {
     console.log('Unable to fetch data for sitemap - database not available')
   }
