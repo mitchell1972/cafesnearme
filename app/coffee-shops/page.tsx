@@ -23,50 +23,62 @@ export const metadata: Metadata = generateSEOMetadata({
 
 export default async function CoffeeShopsPage() {
   // Get top coffee shops
-  const [topCoffeeShops, totalCount, cities] = await Promise.all([
-    prisma.cafe.findMany({
-      where: {
-        OR: [
-          { features: { has: 'Specialty Coffee' } },
-          { features: { has: 'Artisan Coffee' } },
-          { name: { contains: 'Coffee', mode: 'insensitive' } },
-        ],
-      },
-      orderBy: [
-        { rating: 'desc' },
-        { reviewCount: 'desc' },
-      ],
-      take: 12,
-    }),
-    prisma.cafe.count({
-      where: {
-        OR: [
-          { features: { has: 'Specialty Coffee' } },
-          { features: { has: 'Artisan Coffee' } },
-          { name: { contains: 'Coffee', mode: 'insensitive' } },
-        ],
-      },
-    }),
-    prisma.cafe.groupBy({
-      by: ['city'],
-      where: {
-        OR: [
-          { features: { has: 'Specialty Coffee' } },
-          { features: { has: 'Artisan Coffee' } },
-          { name: { contains: 'Coffee', mode: 'insensitive' } },
-        ],
-      },
-      _count: {
-        city: true,
-      },
-      orderBy: {
-        _count: {
-          city: 'desc',
+  let topCoffeeShops: any[] = []
+  let totalCount = 0
+  let cities: any[] = []
+
+  try {
+    const results = await Promise.all([
+      prisma.cafe.findMany({
+        where: {
+          OR: [
+            { features: { has: 'Specialty Coffee' } },
+            { features: { has: 'Artisan Coffee' } },
+            { name: { contains: 'Coffee', mode: 'insensitive' } },
+          ],
         },
-      },
-      take: 6,
-    }),
-  ])
+        orderBy: [
+          { rating: 'desc' },
+          { reviewCount: 'desc' },
+        ],
+        take: 12,
+      }),
+      prisma.cafe.count({
+        where: {
+          OR: [
+            { features: { has: 'Specialty Coffee' } },
+            { features: { has: 'Artisan Coffee' } },
+            { name: { contains: 'Coffee', mode: 'insensitive' } },
+          ],
+        },
+      }),
+      prisma.cafe.groupBy({
+        by: ['city'],
+        where: {
+          OR: [
+            { features: { has: 'Specialty Coffee' } },
+            { features: { has: 'Artisan Coffee' } },
+            { name: { contains: 'Coffee', mode: 'insensitive' } },
+          ],
+        },
+        _count: {
+          city: true,
+        },
+        orderBy: {
+          _count: {
+            city: 'desc',
+          },
+        },
+        take: 6,
+      }),
+    ])
+    
+    topCoffeeShops = results[0]
+    totalCount = results[1]
+    cities = results[2]
+  } catch (error) {
+    console.log('Unable to fetch coffee shops data - database not available')
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
