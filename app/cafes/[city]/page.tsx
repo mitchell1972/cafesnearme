@@ -13,14 +13,19 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const cityName = params.city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   
-  const cafeCount = await prisma.cafe.count({
-    where: {
-      city: {
-        equals: cityName,
-        mode: 'insensitive',
+  let cafeCount = 0
+  try {
+    cafeCount = await prisma.cafe.count({
+      where: {
+        city: {
+          equals: cityName,
+          mode: 'insensitive',
+        },
       },
-    },
-  })
+    })
+  } catch (error) {
+    console.log('Unable to fetch cafe count - database not available')
+  }
 
   const description = generateMetaDescription('city', {
     city: cityName,
@@ -28,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   })
 
   return generateSEOMetadata({
-    title: `Cafes in ${cityName} - ${cafeCount} Coffee Shops | Cafes Near Me`,
+    title: `Cafes in ${cityName} - ${cafeCount ? `${cafeCount} ` : ''}Coffee Shops | Cafes Near Me`,
     description,
     keywords: [
       `cafes in ${cityName}`,
@@ -43,22 +48,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  const cities = await prisma.cafe.groupBy({
-    by: ['city'],
-    _count: {
-      city: true,
-    },
-    orderBy: {
+  try {
+    const cities = await prisma.cafe.groupBy({
+      by: ['city'],
       _count: {
-        city: 'desc',
+        city: true,
       },
-    },
-    take: 50, // Pre-generate pages for top 50 cities
-  })
+      orderBy: {
+        _count: {
+          city: 'desc',
+        },
+      },
+      take: 50, // Pre-generate pages for top 50 cities
+    })
 
-  return cities.map((city) => ({
-    city: city.city.toLowerCase().replace(/\s+/g, '-'),
-  }))
+    return cities.map((city) => ({
+      city: city.city.toLowerCase().replace(/\s+/g, '-'),
+    }))
+  } catch (error) {
+    console.log('Unable to generate static params - database not available during build')
+    // Return empty array to skip static generation when database is not available
+    return []
+  }
 }
 
 export default async function CityPage({ params }: PageProps) {

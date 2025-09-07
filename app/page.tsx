@@ -7,30 +7,37 @@ import { Coffee, MapPin, Clock, Wifi } from 'lucide-react'
 
 export default async function HomePage() {
   // Get featured cafes for the home page
-  const featuredCafes = await prisma.cafe.findMany({
-    take: 6,
-    orderBy: [
-      { rating: 'desc' },
-      { reviewCount: 'desc' },
-    ],
-    where: {
-      rating: { gte: 4 },
-    },
-  })
-
-  // Get popular cities for SEO
-  const popularCities = await prisma.cafe.groupBy({
-    by: ['city'],
-    _count: {
-      city: true,
-    },
-    orderBy: {
-      _count: {
-        city: 'desc',
+  let featuredCafes = []
+  let popularCities = []
+  
+  try {
+    featuredCafes = await prisma.cafe.findMany({
+      take: 6,
+      orderBy: [
+        { rating: 'desc' },
+        { reviewCount: 'desc' },
+      ],
+      where: {
+        rating: { gte: 4 },
       },
-    },
-    take: 8,
-  })
+    })
+
+    // Get popular cities for SEO
+    popularCities = await prisma.cafe.groupBy({
+      by: ['city'],
+      _count: {
+        city: true,
+      },
+      orderBy: {
+        _count: {
+          city: 'desc',
+        },
+      },
+      take: 8,
+    })
+  } catch (error) {
+    console.log('Unable to fetch data - database not available')
+  }
 
   return (
     <div className="min-h-screen">

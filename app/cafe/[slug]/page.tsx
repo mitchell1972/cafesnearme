@@ -14,48 +14,59 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const cafe = await prisma.cafe.findUnique({
-    where: { slug: params.slug },
-  })
+  try {
+    const cafe = await prisma.cafe.findUnique({
+      where: { slug: params.slug },
+    })
 
-  if (!cafe) return {}
+    if (!cafe) return {}
 
-  const description = generateMetaDescription('cafe', {
-    name: cafe.name,
-    city: cafe.city,
-    address: cafe.address,
-    description: cafe.description,
-    amenities: cafe.amenities,
-  })
+    const description = generateMetaDescription('cafe', {
+      name: cafe.name,
+      city: cafe.city,
+      address: cafe.address,
+      description: cafe.description,
+      amenities: cafe.amenities,
+    })
 
-  return generateSEOMetadata({
-    title: `${cafe.name} - ${cafe.city} | Cafes Near Me`,
-    description: cafe.metaDescription || description,
-    keywords: [
-      cafe.name,
-      `${cafe.name} ${cafe.city}`,
-      `cafe ${cafe.postcode}`,
-      `coffee shop ${cafe.area || cafe.city}`,
-      ...(cafe.amenities || []),
-    ],
-    openGraph: {
-      title: cafe.name,
+    return generateSEOMetadata({
+      title: `${cafe.name} - ${cafe.city} | Cafes Near Me`,
       description: cafe.metaDescription || description,
-      images: cafe.images?.length > 0 ? cafe.images : cafe.thumbnail ? [cafe.thumbnail] : [],
-    },
-    canonical: `/cafe/${cafe.slug}`,
-  })
+      keywords: [
+        cafe.name,
+        `${cafe.name} ${cafe.city}`,
+        `cafe ${cafe.postcode}`,
+        `coffee shop ${cafe.area || cafe.city}`,
+        ...(cafe.amenities || []),
+      ],
+      openGraph: {
+        title: cafe.name,
+        description: cafe.metaDescription || description,
+        images: cafe.images?.length > 0 ? cafe.images : cafe.thumbnail ? [cafe.thumbnail] : [],
+      },
+      canonical: `/cafe/${cafe.slug}`,
+    })
+  } catch (error) {
+    console.log('Unable to fetch cafe metadata - database not available')
+    return {}
+  }
 }
 
 export async function generateStaticParams() {
-  const cafes = await prisma.cafe.findMany({
-    select: { slug: true },
-    take: 100, // Generate static pages for top 100 cafes
-  })
+  try {
+    const cafes = await prisma.cafe.findMany({
+      select: { slug: true },
+      take: 100, // Generate static pages for top 100 cafes
+    })
 
-  return cafes.map((cafe) => ({
-    slug: cafe.slug,
-  }))
+    return cafes.map((cafe) => ({
+      slug: cafe.slug,
+    }))
+  } catch (error) {
+    console.log('Unable to generate static params - database not available during build')
+    // Return empty array to skip static generation when database is not available
+    return []
+  }
 }
 
 export default async function CafePage({ params }: PageProps) {
