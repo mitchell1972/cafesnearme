@@ -279,12 +279,102 @@ export default async function CafePage({ params }: PageProps) {
 
                 <CardContent className="space-y-6">
                   {/* Description */}
-                  {cafe.description && (
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">About</h3>
-                      <p className="text-gray-600">{cafe.description}</p>
-                    </div>
-                  )}
+                  {cafe.description && (() => {
+                    try {
+                      // Try to parse as JSON first
+                      const parsed = JSON.parse(cafe.description);
+                      
+                      // If it's structured data from Google Places, extract meaningful info
+                      const highlights: string[] = [];
+                      
+                      // Extract service options
+                      if (parsed['Service options']) {
+                        Object.entries(parsed['Service options']).forEach(([key, value]) => {
+                          if (value === true) highlights.push(key);
+                        });
+                      }
+                      
+                      // Extract highlights
+                      if (parsed['Highlights']) {
+                        Object.entries(parsed['Highlights']).forEach(([key, value]) => {
+                          if (value === true) highlights.push(key);
+                        });
+                      }
+                      
+                      // Extract offerings
+                      if (parsed['Offerings']) {
+                        Object.entries(parsed['Offerings']).forEach(([key, value]) => {
+                          if (value === true) highlights.push(key);
+                        });
+                      }
+                      
+                      // Extract dining options
+                      if (parsed['Dining options']) {
+                        Object.entries(parsed['Dining options']).forEach(([key, value]) => {
+                          if (value === true) highlights.push(key);
+                        });
+                      }
+                      
+                      // If we found structured data, display it nicely
+                      if (highlights.length > 0 || Object.keys(parsed).length > 0) {
+                        return (
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">About</h3>
+                            {highlights.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                {highlights.map((highlight, index) => (
+                                  <span key={index} className="bg-gray-100 rounded-full px-3 py-1 text-sm">
+                                    {highlight}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            
+                            {/* Show other structured info */}
+                            {Object.entries(parsed).map(([category, items]: [string, any]) => {
+                              if (typeof items === 'object' && items !== null) {
+                                const activeItems = Object.entries(items)
+                                  .filter(([_, value]) => value === true)
+                                  .map(([key]) => key);
+                                
+                                if (activeItems.length > 0 && !['Service options', 'Highlights', 'Offerings', 'Dining options'].includes(category)) {
+                                  return (
+                                    <div key={category} className="mb-3">
+                                      <h4 className="font-medium text-sm text-gray-700 mb-1">{category}</h4>
+                                      <div className="flex flex-wrap gap-2">
+                                        {activeItems.map((item, idx) => (
+                                          <span key={idx} className="text-sm text-gray-600">
+                                            • {item}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              }
+                              return null;
+                            })}
+                          </div>
+                        );
+                      }
+                      
+                      // If parsed but no structured data found, show as text
+                      return (
+                        <div>
+                          <h3 className="font-semibold text-lg mb-2">About</h3>
+                          <p className="text-gray-600">{JSON.stringify(parsed)}</p>
+                        </div>
+                      );
+                    } catch (e) {
+                      // If not JSON, display as regular text
+                      return (
+                        <div>
+                          <h3 className="font-semibold text-lg mb-2">About</h3>
+                          <p className="text-gray-600">{cafe.description}</p>
+                        </div>
+                      );
+                    }
+                  })()}
 
                   {/* Amenities */}
                   {amenitiesArray.length > 0 && (
