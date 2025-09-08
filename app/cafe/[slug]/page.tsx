@@ -21,25 +21,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!cafe) return {}
 
-    // Convert comma-separated strings to arrays (handle both string and array types)
+    // Convert comma-separated strings to arrays - data is always strings from DB
     let amenitiesArray: string[] = []
-    if (cafe.amenities) {
-      const amenities = cafe.amenities as string | string[]
-      if (typeof amenities === 'string') {
-        amenitiesArray = amenities.split(',').map((a: string) => a.trim())
-      } else if (Array.isArray(amenities)) {
-        amenitiesArray = amenities
-      }
+    const amenitiesStr = cafe.amenities as unknown as string
+    if (amenitiesStr && amenitiesStr.trim() !== '') {
+      amenitiesArray = amenitiesStr.split(',').map((a: string) => a.trim()).filter(Boolean)
     }
     
     let imagesArray: string[] = []
-    if (cafe.images) {
-      const images = cafe.images as string | string[]
-      if (typeof images === 'string') {
-        imagesArray = images.split(',').map((img: string) => img.trim())
-      } else if (Array.isArray(images)) {
-        imagesArray = images
-      }
+    const imagesStr = cafe.images as unknown as string
+    if (imagesStr && imagesStr.trim() !== '') {
+      imagesArray = imagesStr.split(',').map((img: string) => img.trim()).filter(Boolean)
     }
 
     const description = generateMetaDescription('cafe', {
@@ -122,35 +114,23 @@ export default async function CafePage({ params }: PageProps) {
     notFound()
   }
 
-  // Convert comma-separated strings to arrays (handle both string and array types)
+  // Convert comma-separated strings to arrays - data is always strings from DB
   let amenitiesArray: string[] = []
-  if (cafe.amenities) {
-    const amenities = cafe.amenities as string | string[]
-    if (typeof amenities === 'string') {
-      amenitiesArray = amenities.split(',').map((a: string) => a.trim())
-    } else if (Array.isArray(amenities)) {
-      amenitiesArray = amenities
-    }
+  const amenitiesStr = cafe.amenities as unknown as string
+  if (amenitiesStr && amenitiesStr.trim() !== '') {
+    amenitiesArray = amenitiesStr.split(',').map((a: string) => a.trim()).filter(Boolean)
   }
   
   let featuresArray: string[] = []
-  if (cafe.features) {
-    const features = cafe.features as string | string[]
-    if (typeof features === 'string') {
-      featuresArray = features.split(',').map((f: string) => f.trim())
-    } else if (Array.isArray(features)) {
-      featuresArray = features
-    }
+  const featuresStr = cafe.features as unknown as string
+  if (featuresStr && featuresStr.trim() !== '') {
+    featuresArray = featuresStr.split(',').map((f: string) => f.trim()).filter(Boolean)
   }
   
   let imagesArray: string[] = []
-  if (cafe.images) {
-    const images = cafe.images as string | string[]
-    if (typeof images === 'string') {
-      imagesArray = images.split(',').map((img: string) => img.trim())
-    } else if (Array.isArray(images)) {
-      imagesArray = images
-    }
+  const imagesStr = cafe.images as unknown as string
+  if (imagesStr && imagesStr.trim() !== '') {
+    imagesArray = imagesStr.split(',').map((img: string) => img.trim()).filter(Boolean)
   }
 
   const isOpen = isOpenNow(cafe.openingHours)
