@@ -4,6 +4,8 @@ import { calculateDistance, getBoundingBox } from '@/lib/geo'
 import { getPostcodeCoordinates, looksLikePostcode } from '@/lib/postcodes'
 import { Prisma } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
@@ -35,12 +37,12 @@ export async function GET(request: NextRequest) {
     // Text search
     if (query) {
       where.OR = [
-        { name: { contains: query, mode: 'insensitive' } },
-        { address: { contains: query, mode: 'insensitive' } },
-        { postcode: { contains: query, mode: 'insensitive' } },
-        { city: { contains: query, mode: 'insensitive' } },
-        { area: { contains: query, mode: 'insensitive' } },
-        { description: { contains: query, mode: 'insensitive' } },
+        { name: { contains: query } },
+        { address: { contains: query } },
+        { postcode: { contains: query } },
+        { city: { contains: query } },
+        { area: { contains: query } },
+        { description: { contains: query } },
       ]
     }
 
@@ -64,7 +66,6 @@ export async function GET(request: NextRequest) {
         ...amenities.map(amenity => ({
           amenities: {
             contains: amenity,
-            mode: 'insensitive',
           }
         }))
       ]
@@ -77,7 +78,6 @@ export async function GET(request: NextRequest) {
         ...features.map(feature => ({
           features: {
             contains: feature,
-            mode: 'insensitive',
           }
         }))
       ]
