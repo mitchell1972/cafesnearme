@@ -15,6 +15,17 @@ const POSTCODE_COORDINATES: Record<string, { lat: number; lng: number }> = {
   'W': { lat: 51.5136, lng: -0.1997 },
   'WC': { lat: 51.5246, lng: -0.1340 },
   
+  // Bromley area postcodes
+  'BR': { lat: 51.4059, lng: 0.0149 }, // Bromley general
+  'BR1': { lat: 51.4059, lng: 0.0149 }, // Bromley
+  'BR2': { lat: 51.3892, lng: 0.0211 }, // Bickley/Bromley Common
+  'BR3': { lat: 51.4084, lng: -0.0197 }, // Beckenham
+  'BR4': { lat: 51.3789, lng: -0.0197 }, // West Wickham
+  'BR5': { lat: 51.3653, lng: 0.0831 }, // Orpington
+  'BR6': { lat: 51.3517, lng: 0.1033 }, // Farnborough
+  'BR7': { lat: 51.4059, lng: 0.0649 }, // Chislehurst
+  'BR8': { lat: 51.4523, lng: 0.1494 }, // Swanley
+  
   // East of England
   'CB': { lat: 52.2053, lng: 0.1218 }, // Cambridge
   'CM': { lat: 51.7343, lng: 0.4691 }, // Chelmsford
