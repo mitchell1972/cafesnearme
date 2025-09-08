@@ -81,8 +81,8 @@ export function SearchResults() {
       const radiusInKm = (parseFloat(filters.radius) * 1.609).toString()
       params.set('radius', radiusInKm)
       if (filters.openNow) params.set('openNow', 'true')
-      if (filters.amenities.length > 0) params.set('amenities', filters.amenities.join(','))
-      if (filters.features.length > 0) params.set('features', filters.features.join(','))
+      if (filters.amenities && filters.amenities.length > 0) params.set('amenities', filters.amenities.join(','))
+      if (filters.features && filters.features.length > 0) params.set('features', filters.features.join(','))
       
       // Add pagination
       params.set('limit', '12')
@@ -91,15 +91,19 @@ export function SearchResults() {
       const response = await fetch(`/api/search?${params}`)
       const data = await response.json()
 
+      // Ensure data has the expected structure
+      const cafesData = data?.cafes || []
+      const paginationData = data?.pagination || { hasMore: false }
+
       if (reset) {
-        setCafes(data.cafes)
+        setCafes(cafesData)
         setOffset(12)
       } else {
-        setCafes(prev => [...prev, ...data.cafes])
+        setCafes(prev => [...prev, ...cafesData])
         setOffset(prev => prev + 12)
       }
       
-      setHasMore(data.pagination.hasMore)
+      setHasMore(paginationData.hasMore || false)
     } catch (error) {
       console.error('Error fetching cafes:', error)
     } finally {
@@ -128,18 +132,18 @@ export function SearchResults() {
   const toggleAmenity = (amenity: string) => {
     setFilters(prev => ({
       ...prev,
-      amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter(a => a !== amenity)
-        : [...prev.amenities, amenity]
+      amenities: (prev.amenities || []).includes(amenity)
+        ? (prev.amenities || []).filter(a => a !== amenity)
+        : [...(prev.amenities || []), amenity]
     }))
   }
 
   const toggleFeature = (feature: string) => {
     setFilters(prev => ({
       ...prev,
-      features: prev.features.includes(feature)
-        ? prev.features.filter(f => f !== feature)
-        : [...prev.features, feature]
+      features: (prev.features || []).includes(feature)
+        ? (prev.features || []).filter(f => f !== feature)
+        : [...(prev.features || []), feature]
     }))
   }
 
@@ -191,7 +195,7 @@ export function SearchResults() {
                 <label key={amenity} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={filters.amenities.includes(amenity)}
+                    checked={(filters.amenities || []).includes(amenity)}
                     onChange={() => toggleAmenity(amenity)}
                     className="rounded"
                   />
@@ -209,7 +213,7 @@ export function SearchResults() {
                 <label key={feature} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={filters.features.includes(feature)}
+                    checked={(filters.features || []).includes(feature)}
                     onChange={() => toggleFeature(feature)}
                     className="rounded"
                   />
