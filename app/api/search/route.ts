@@ -34,15 +34,15 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: Prisma.CafeWhereInput = {}
 
-    // Text search
+    // Text search - case insensitive
     if (query) {
       where.OR = [
-        { name: { contains: query } },
-        { address: { contains: query } },
-        { postcode: { contains: query } },
-        { city: { contains: query } },
-        { area: { contains: query } },
-        { description: { contains: query } },
+        { name: { contains: query, mode: 'insensitive' } },
+        { address: { contains: query, mode: 'insensitive' } },
+        { postcode: { contains: query, mode: 'insensitive' } },
+        { city: { contains: query, mode: 'insensitive' } },
+        { area: { contains: query, mode: 'insensitive' } },
+        { description: { contains: query, mode: 'insensitive' } },
       ]
     }
 

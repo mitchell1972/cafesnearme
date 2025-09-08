@@ -28,19 +28,46 @@ const POSTCODE_COORDINATES: Record<string, { lat: number; lng: number }> = {
   
   // East of England
   'CB': { lat: 52.2053, lng: 0.1218 }, // Cambridge
+  'CB9': { lat: 52.0736, lng: 0.4472 }, // Saffron Walden
   'CM': { lat: 51.7343, lng: 0.4691 }, // Chelmsford
+  'CM0': { lat: 51.6755, lng: 0.6795 }, // Burnham-on-Crouch
+  'CM9': { lat: 51.7316, lng: 0.6773 }, // Maldon
   'CO': { lat: 51.8959, lng: 0.8919 }, // Colchester
   'CO1': { lat: 51.8959, lng: 0.8919 }, // Colchester Town Centre
   'CO2': { lat: 51.8892, lng: 0.8640 }, // Colchester South
   'CO3': { lat: 51.8914, lng: 0.8485 }, // Colchester West
   'CO4': { lat: 51.9023, lng: 0.9093 }, // Colchester North
+  'CO9': { lat: 51.9319, lng: 0.6061 }, // Halstead
   'CO10': { lat: 52.0375, lng: 0.7329 }, // Sudbury
+  'EN9': { lat: 51.8097, lng: 0.0105 }, // Waltham Abbey
+  'IG': { lat: 51.5590, lng: 0.0821 }, // Ilford/Loughton area
+  'IG10': { lat: 51.6458, lng: 0.0754 }, // Loughton
+  'IG7': { lat: 51.6094, lng: 0.0342 }, // Chigwell
+  'IG8': { lat: 51.6194, lng: 0.0934 }, // Woodford Green
+  'IG9': { lat: 51.6097, lng: 0.0505 }, // Buckhurst Hill
   'IP': { lat: 52.0567, lng: 1.1582 }, // Ipswich
+  'IP1': { lat: 52.0567, lng: 1.1582 }, // Ipswich Central
+  'IP2': { lat: 52.0567, lng: 1.1300 }, // Ipswich East
+  'IP3': { lat: 52.0567, lng: 1.1100 }, // Ipswich South
+  'IP4': { lat: 52.0667, lng: 1.1582 }, // Ipswich North
   'NR': { lat: 52.9493, lng: 1.1328 }, // Great Yarmouth/Lowestoft area
   'PE': { lat: 52.5695, lng: -0.2405 }, // Peterborough
   'RM': { lat: 51.5590, lng: 0.1834 }, // Romford
+  'RM1': { lat: 51.5764, lng: 0.1834 }, // Romford
+  'RM2': { lat: 51.5764, lng: 0.1634 }, // Gidea Park
+  'RM3': { lat: 51.5964, lng: 0.2234 }, // Harold Wood
   'SG': { lat: 51.9017, lng: -0.2018 }, // Stevenage
   'SS': { lat: 51.5456, lng: 0.7077 }, // Southend
+  'SS0': { lat: 51.5344, lng: 0.7052 }, // Westcliff-on-Sea
+  'SS1': { lat: 51.5456, lng: 0.7077 }, // Southend Central
+  'SS2': { lat: 51.5372, lng: 0.7142 }, // Southend North
+  'SS3': { lat: 51.5372, lng: 0.7942 }, // Shoeburyness
+  'SS4': { lat: 51.5172, lng: 0.6542 }, // Rochford
+  'SS5': { lat: 51.5572, lng: 0.6542 }, // Hockley
+  'SS6': { lat: 51.5672, lng: 0.6842 }, // Rayleigh
+  'SS7': { lat: 51.5172, lng: 0.5842 }, // Benfleet
+  'SS8': { lat: 51.5072, lng: 0.5742 }, // Canvey Island
+  'SS9': { lat: 51.5411, lng: 0.6529 }, // Leigh-on-Sea
   
   // Add more as needed...
 }
