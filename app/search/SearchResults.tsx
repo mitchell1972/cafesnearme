@@ -57,8 +57,8 @@ export function SearchResults() {
   const [filters, setFilters] = useState({
     openNow: searchParams.get('openNow') === 'true',
     radius: searchParams.get('radius') || '5',  // Default to 5 miles
-    amenities: searchParams.get('amenities')?.split(',').filter(Boolean) || [],
-    features: searchParams.get('features')?.split(',').filter(Boolean) || [],
+    amenities: searchParams.get('amenities') ? searchParams.get('amenities')!.split(',').filter(Boolean) : [],
+    features: searchParams.get('features') ? searchParams.get('features')!.split(',').filter(Boolean) : [],
   })
   const [showFilters, setShowFilters] = useState(false)
 
