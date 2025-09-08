@@ -96,10 +96,11 @@ export async function POST(request: NextRequest) {
           description: row.about || row.description || '',
           rating: parseFloat(row.rating || 0) || undefined,
           reviewCount: parseInt(row.reviews || 0) || undefined,
-          amenities: row.subtypes ? row.subtypes.split(',').map((s: string) => s.trim()) : [],
-          features: row.category ? [row.category] : [],
+          amenities: row.subtypes ? row.subtypes.split(',').map((s: string) => s.trim()).join(',') : '',
+          features: row.category ? row.category : '',
           priceRange: row.price_level || '',
           thumbnail: row.photo || '',
+          images: row.photos_sample ? row.photos_sample.map((p: { photo_url: string }) => p.photo_url).join(',') : '',
         }
         
         // Validate required fields
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest) {
         rowsTotal: allData.length,
         rowsSuccess: successCount,
         rowsFailed: failedCount,
-        errors: errors.slice(0, 10), // Limit errors stored
+        errors: JSON.stringify(errors.slice(0, 10)), // Limit errors stored
       },
     })
     

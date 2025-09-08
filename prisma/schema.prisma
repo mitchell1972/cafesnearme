@@ -6,15 +6,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Cafe {
   id            String    @id @default(cuid())
   name          String
   slug          String    @unique
-  description   String?   @db.Text
+  description   String?
   
   // Location data
   address       String
@@ -29,12 +29,12 @@ model Cafe {
   website       String?
   email         String?
   
-  // Features and amenities
-  amenities     String[]  // WiFi, Parking, Outdoor Seating, etc.
-  features      String[]  // Breakfast, Brunch, Vegan Options, etc.
+  // Features and amenities (stored as comma-separated strings)
+  amenities     String    // e.g., "WiFi,Parking,Outdoor Seating"
+  features      String    // e.g., "Breakfast,Brunch,Vegan Options"
   
-  // Opening hours stored as JSON
-  openingHours  Json?     // { monday: { open: "08:00", close: "18:00" }, ... }
+  // Opening hours stored as JSON String
+  openingHours  String?   // { "monday": { "open": "08:00", "close": "18:00" }, ... }
   
   // Additional information
   priceRange    String?   // $, $$, $$$, $$$$
@@ -43,11 +43,11 @@ model Cafe {
   
   // Images
   thumbnail     String?
-  images        String[]
+  images        String    // Stored as a comma-separated list of URLs
   
   // SEO
   metaTitle     String?
-  metaDescription String? @db.Text
+  metaDescription String?
   
   // Timestamps
   createdAt     DateTime  @default(now())
@@ -73,7 +73,7 @@ model Review {
   authorName String
   authorEmail String?
   rating    Int      // 1-5
-  comment   String?  @db.Text
+  comment   String?
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -101,7 +101,7 @@ model ImportLog {
   rowsTotal   Int
   rowsSuccess Int
   rowsFailed  Int
-  errors      Json?    // Array of error messages
+  errors      String?  // Stored as a JSON string of error messages
   
   createdAt   DateTime @default(now())
 }

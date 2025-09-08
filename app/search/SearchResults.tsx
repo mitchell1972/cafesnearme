@@ -25,8 +25,8 @@ interface Cafe {
   reviewCount?: number
   thumbnail?: string | null
   priceRange?: string | null
-  amenities?: string[]
-  features?: string[]
+  amenities?: string | null
+  features?: string | null
   openingHours?: any
 }
 

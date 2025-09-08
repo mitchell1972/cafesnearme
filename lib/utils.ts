@@ -9,8 +9,18 @@ export function cn(...inputs: ClassValue[]) {
  * Check if a cafe is currently open based on opening hours
  */
 export function isOpenNow(openingHours: any): boolean | null {
+  if (!openingHours) return null
+
+  let parsedHours: any;
+  try {
+    parsedHours = typeof openingHours === 'string' ? JSON.parse(openingHours) : openingHours;
+  } catch (e) {
+    console.error("Failed to parse opening hours:", openingHours);
+    return null;
+  }
+
   // Return null if no opening hours data is available
-  if (!openingHours || Object.keys(openingHours).length === 0) return null
+  if (!parsedHours || Object.keys(parsedHours).length === 0) return null
 
   const now = new Date()
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
@@ -22,12 +32,12 @@ export function isOpenNow(openingHours: any): boolean | null {
     console.log('Checking if open:', {
       currentDay,
       currentTime,
-      openingHours: openingHours[currentDay],
-      fullOpeningHours: openingHours
+      openingHours: parsedHours[currentDay],
+      fullOpeningHours: parsedHours
     })
   }
 
-  const todayHours = openingHours[currentDay]
+  const todayHours = parsedHours[currentDay]
   if (!todayHours || !todayHours.open || !todayHours.close) return false
 
   const openTime = parseTime(todayHours.open)
@@ -75,10 +85,18 @@ export function formatOpeningHours(hours: any): string {
 export function getTodayHours(openingHours: any): string {
   if (!openingHours) return 'Hours not available'
 
+  let parsedHours: any;
+  try {
+    parsedHours = typeof openingHours === 'string' ? JSON.parse(openingHours) : openingHours;
+  } catch (e) {
+    console.error("Failed to parse opening hours:", openingHours);
+    return 'Hours not available';
+  }
+
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
   const today = dayNames[new Date().getDay()]
   
-  return formatOpeningHours(openingHours[today])
+  return formatOpeningHours(parsedHours[today])
 }
 
 /**

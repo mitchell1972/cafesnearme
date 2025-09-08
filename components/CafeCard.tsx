@@ -21,8 +21,8 @@ interface CafeCardProps {
     reviewCount?: number
     thumbnail?: string | null
     priceRange?: string | null
-    amenities?: string[]
-    features?: string[]
+    amenities?: string | null
+    features?: string | null
     openingHours?: any
   }
   showDistance?: boolean
@@ -38,6 +38,7 @@ const amenityIcons: Record<string, React.ReactNode> = {
 
 export function CafeCard({ cafe, showDistance = true, onFavorite, isFavorite = false }: CafeCardProps) {
   const isOpen = isOpenNow(cafe.openingHours)
+  const amenities = cafe.amenities ? cafe.amenities.split(',') : []
   
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
@@ -122,9 +123,9 @@ export function CafeCard({ cafe, showDistance = true, onFavorite, isFavorite = f
       
       <CardContent>
         {/* Amenities */}
-        {cafe.amenities && cafe.amenities.length > 0 && (
+        {amenities.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
-            {cafe.amenities.slice(0, 3).map((amenity) => (
+            {amenities.slice(0, 3).map((amenity) => (
               <div
                 key={amenity}
                 className="flex items-center gap-1 text-sm text-muted-foreground"
@@ -133,9 +134,9 @@ export function CafeCard({ cafe, showDistance = true, onFavorite, isFavorite = f
                 <span>{amenity}</span>
               </div>
             ))}
-            {cafe.amenities.length > 3 && (
+            {amenities.length > 3 && (
               <span className="text-sm text-muted-foreground">
-                +{cafe.amenities.length - 3} more
+                +{amenities.length - 3} more
               </span>
             )}
           </div>

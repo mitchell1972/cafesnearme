@@ -59,12 +59,28 @@ export async function GET(request: NextRequest) {
 
     // Amenities filter
     if (amenities.length > 0) {
-      where.amenities = { hasEvery: amenities }
+      where.AND = [
+        ...(where.AND as any[] || []),
+        ...amenities.map(amenity => ({
+          amenities: {
+            contains: amenity,
+            mode: 'insensitive',
+          }
+        }))
+      ]
     }
 
     // Features filter
     if (features.length > 0) {
-      where.features = { hasEvery: features }
+      where.AND = [
+        ...(where.AND as any[] || []),
+        ...features.map(feature => ({
+          features: {
+            contains: feature,
+            mode: 'insensitive',
+          }
+        }))
+      ]
     }
 
     // Get cafes
