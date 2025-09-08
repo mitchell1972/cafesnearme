@@ -9,10 +9,13 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      )
+      return NextResponse.json({
+        success: false,
+        totalRows: 0,
+        successCount: 0,
+        failedCount: 0,
+        errors: ['No file provided. Please select a CSV or Excel file to upload.'],
+      })
     }
 
     console.log(`Processing file: ${file.name} (${file.size} bytes)`)
@@ -164,13 +167,15 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Import error:', error)
-    return NextResponse.json(
-      { 
-        error: 'Failed to import file', 
-        details: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-      },
-      { status: 500 }
-    )
+    return NextResponse.json({
+      success: false,
+      totalRows: 0,
+      successCount: 0,
+      failedCount: 0,
+      errors: [
+        'Failed to import file',
+        error instanceof Error ? error.message : 'Unknown error'
+      ],
+    })
   }
 }
