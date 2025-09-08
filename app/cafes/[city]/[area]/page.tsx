@@ -275,7 +275,7 @@ export default async function AreaPage({ params }: PageProps) {
 
             {totalCount > cafes.length && cafes.length > 0 && (
               <div className="text-center mt-8">
-                <Link href={`/search?q=${areaName}+${cityName}`}>
+                <Link href={`/search?q=${cityName}`}>
                   <button className="bg-primary text-white px-6 py-3 rounded-md hover:bg-primary/90 transition-colors">
                     View All {totalCount} Cafes
                   </button>
