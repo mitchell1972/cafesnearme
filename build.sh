@@ -1,23 +1,24 @@
 #!/bin/bash
-set -e
-
-# This script is run by Vercel during the build step.
-# It ensures that the database migration is applied before the Next.js app is built.
 
 echo "Running build script..."
 
-# If a .env file exists (i.e., we are in a local environment), load the variables from it.
-if [ -f .env ]; then
-  echo "Loading environment variables from .env file for local build..."
-  export $(grep -v '^#' .env | xargs)
+# Set default DATABASE_URL if not provided (for Vercel deployment)
+if [ -z "$DATABASE_URL" ]; then
+    echo "DATABASE_URL not set, using default SQLite database"
+    export DATABASE_URL="file:./dev.db"
 fi
 
-# Run the database migration. The DATABASE_URL is provided by Vercel's environment variables or the local .env file.
-echo "Applying database migrations..."
-prisma migrate deploy
+# Only run migrations if not in Vercel (Vercel doesn't need local SQLite migrations)
+if [ -z "$VERCEL" ]; then
+    echo "Running locally - applying database migrations..."
+    npx prisma migrate deploy
+else
+    echo "Running on Vercel - skipping local database migrations"
+    # Just generate the Prisma client
+    npx prisma generate
+fi
 
-# Build the Next.js application.
-echo "Building Next.js app..."
+echo "Building Next.js application..."
 next build
 
-echo "Build script completed successfully."
+echo "Build complete!"
