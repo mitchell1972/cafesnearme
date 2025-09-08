@@ -47,29 +47,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   })
 }
 
-export async function generateStaticParams() {
-  try {
-    const cities = await prisma.cafe.groupBy({
-      by: ['city'],
-      _count: {
-        city: true,
-      },
-      orderBy: {
-        _count: {
-          city: 'desc',
-        },
-      },
-      take: 50, // Pre-generate pages for top 50 cities
-    })
+// Dynamic rendering for city pages
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-    return cities.map((city: any) => ({
-      city: city.city.toLowerCase().replace(/\s+/g, '-'),
-    }))
-  } catch (error) {
-    console.log('Unable to generate static params - database not available during build')
-    // Return empty array to skip static generation when database is not available
-    return []
-  }
+export async function generateStaticParams() {
+  // Skip static generation for city pages - they will be rendered dynamically
+  return []
 }
 
 export default async function CityPage({ params }: PageProps) {

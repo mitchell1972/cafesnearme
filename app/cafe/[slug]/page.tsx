@@ -52,21 +52,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export async function generateStaticParams() {
-  try {
-    const cafes = await prisma.cafe.findMany({
-      select: { slug: true },
-      take: 100, // Generate static pages for top 100 cafes
-    })
+// Dynamic rendering for cafe pages
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-    return cafes.map((cafe: any) => ({
-      slug: cafe.slug,
-    }))
-  } catch (error) {
-    console.log('Unable to generate static params - database not available during build')
-    // Return empty array to skip static generation when database is not available
-    return []
-  }
+export async function generateStaticParams() {
+  // Skip static generation for cafe pages - they will be rendered dynamically
+  return []
 }
 
 export default async function CafePage({ params }: PageProps) {
