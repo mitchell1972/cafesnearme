@@ -47,16 +47,29 @@ export function generateMetadata(props: SEOProps): Metadata {
 }
 
 export function generateCafeStructuredData(cafe: any) {
-  const openingHours = cafe.openingHours || {}
-  const openingHoursSpec = Object.entries(openingHours).map(([day, hours]: [string, any]) => {
-    if (!hours || !hours.open || !hours.close) return null
-    return {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
-      opens: hours.open,
-      closes: hours.close,
+  let openingHoursSpec: any[] = []
+  
+  if (cafe.openingHours) {
+    try {
+      const openingHours = typeof cafe.openingHours === 'string' 
+        ? JSON.parse(cafe.openingHours) 
+        : cafe.openingHours
+      
+      if (openingHours && typeof openingHours === 'object') {
+        openingHoursSpec = Object.entries(openingHours).map(([day, hours]: [string, any]) => {
+          if (!hours || !hours.open || !hours.close) return null
+          return {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
+            opens: hours.open,
+            closes: hours.close,
+          }
+        }).filter(Boolean)
+      }
+    } catch (e) {
+      console.error('Error parsing opening hours for structured data:', e)
     }
-  }).filter(Boolean)
+  }
 
   return {
     '@context': 'https://schema.org',
@@ -87,12 +100,25 @@ export function generateCafeStructuredData(cafe: any) {
       ratingValue: cafe.rating,
       reviewCount: cafe.reviewCount,
     } : undefined,
-    amenityFeature: cafe.amenities?.map((amenity: string) => ({
-      '@type': 'LocationFeatureSpecification',
-      name: amenity,
-      value: true,
-    })),
-    image: cafe.images?.length > 0 ? cafe.images : cafe.thumbnail ? [cafe.thumbnail] : undefined,
+    amenityFeature: (() => {
+      if (!cafe.amenities) return undefined
+      const amenitiesStr = cafe.amenities as unknown as string
+      if (!amenitiesStr || amenitiesStr.trim() === '') return undefined
+      const amenitiesArray = amenitiesStr.split(',').map((a: string) => a.trim()).filter(Boolean)
+      return amenitiesArray.map((amenity: string) => ({
+        '@type': 'LocationFeatureSpecification',
+        name: amenity,
+        value: true,
+      }))
+    })(),
+    image: (() => {
+      const imagesStr = cafe.images as unknown as string
+      if (imagesStr && imagesStr.trim() !== '') {
+        const imagesArray = imagesStr.split(',').map((img: string) => img.trim()).filter(Boolean)
+        if (imagesArray.length > 0) return imagesArray
+      }
+      return cafe.thumbnail ? [cafe.thumbnail] : undefined
+    })(),
   }
 }
 
