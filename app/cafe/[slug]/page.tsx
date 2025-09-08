@@ -21,12 +21,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!cafe) return {}
 
+    // Convert comma-separated strings to arrays (handle both string and array types)
+    let amenitiesArray: string[] = []
+    if (cafe.amenities) {
+      const amenities = cafe.amenities as string | string[]
+      if (typeof amenities === 'string') {
+        amenitiesArray = amenities.split(',').map((a: string) => a.trim())
+      } else if (Array.isArray(amenities)) {
+        amenitiesArray = amenities
+      }
+    }
+    
+    let imagesArray: string[] = []
+    if (cafe.images) {
+      const images = cafe.images as string | string[]
+      if (typeof images === 'string') {
+        imagesArray = images.split(',').map((img: string) => img.trim())
+      } else if (Array.isArray(images)) {
+        imagesArray = images
+      }
+    }
+
     const description = generateMetaDescription('cafe', {
       name: cafe.name,
       city: cafe.city,
       address: cafe.address,
       description: cafe.description,
-      amenities: cafe.amenities,
+      amenities: amenitiesArray.join(', '),
     })
 
     return generateSEOMetadata({
@@ -37,13 +58,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         `${cafe.name} ${cafe.city}`,
         `cafe ${cafe.postcode}`,
         `coffee shop ${cafe.area || cafe.city}`,
-        ...(cafe.amenities || []),
+        ...amenitiesArray,
       ],
       openGraph: {
         title: cafe.name,
         description: cafe.metaDescription || description,
-        images: Array.isArray(cafe.images) && cafe.images.length > 0 
-          ? cafe.images 
+        images: imagesArray.length > 0 
+          ? imagesArray 
           : cafe.thumbnail 
             ? [cafe.thumbnail] 
             : undefined,
@@ -99,6 +120,37 @@ export default async function CafePage({ params }: PageProps) {
 
   if (!cafe) {
     notFound()
+  }
+
+  // Convert comma-separated strings to arrays (handle both string and array types)
+  let amenitiesArray: string[] = []
+  if (cafe.amenities) {
+    const amenities = cafe.amenities as string | string[]
+    if (typeof amenities === 'string') {
+      amenitiesArray = amenities.split(',').map((a: string) => a.trim())
+    } else if (Array.isArray(amenities)) {
+      amenitiesArray = amenities
+    }
+  }
+  
+  let featuresArray: string[] = []
+  if (cafe.features) {
+    const features = cafe.features as string | string[]
+    if (typeof features === 'string') {
+      featuresArray = features.split(',').map((f: string) => f.trim())
+    } else if (Array.isArray(features)) {
+      featuresArray = features
+    }
+  }
+  
+  let imagesArray: string[] = []
+  if (cafe.images) {
+    const images = cafe.images as string | string[]
+    if (typeof images === 'string') {
+      imagesArray = images.split(',').map((img: string) => img.trim())
+    } else if (Array.isArray(images)) {
+      imagesArray = images
+    }
   }
 
   const isOpen = isOpenNow(cafe.openingHours)
@@ -173,9 +225,9 @@ export default async function CafePage({ params }: PageProps) {
             <div className="lg:col-span-2 space-y-6">
               {/* Image Gallery */}
               <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-                {cafe.images && cafe.images.length > 0 ? (
+                {imagesArray.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
-                    {cafe.images.slice(0, 4).map((image: string, index: number) => (
+                    {imagesArray.slice(0, 4).map((image: string, index: number) => (
                       <div key={index} className="relative h-64">
                         <Image
                           src={image}
@@ -255,11 +307,11 @@ export default async function CafePage({ params }: PageProps) {
                   )}
 
                   {/* Amenities */}
-                  {cafe.amenities && cafe.amenities.length > 0 && (
+                  {amenitiesArray.length > 0 && (
                     <div>
                       <h3 className="font-semibold text-lg mb-3">Amenities</h3>
                       <div className="flex flex-wrap gap-3">
-                        {cafe.amenities.map((amenity: string) => (
+                        {amenitiesArray.map((amenity: string) => (
                           <div
                             key={amenity}
                             className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2"
@@ -273,11 +325,11 @@ export default async function CafePage({ params }: PageProps) {
                   )}
 
                   {/* Features */}
-                  {cafe.features && cafe.features.length > 0 && (
+                  {featuresArray.length > 0 && (
                     <div>
                       <h3 className="font-semibold text-lg mb-3">Features</h3>
                       <div className="flex flex-wrap gap-2">
-                        {cafe.features.map((feature: string) => (
+                        {featuresArray.map((feature: string) => (
                           <span
                             key={feature}
                             className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm"
