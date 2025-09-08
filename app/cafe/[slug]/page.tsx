@@ -42,7 +42,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       openGraph: {
         title: cafe.name,
         description: cafe.metaDescription || description,
-        images: cafe.images?.length > 0 ? cafe.images : cafe.thumbnail ? [cafe.thumbnail] : [],
+        images: Array.isArray(cafe.images) && cafe.images.length > 0 
+          ? cafe.images 
+          : cafe.thumbnail 
+            ? [cafe.thumbnail] 
+            : undefined,
       },
       canonical: `/cafe/${cafe.slug}`,
     })

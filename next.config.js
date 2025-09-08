@@ -12,17 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Exclude Prisma from client-side bundle
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        '@prisma/client': false,
-        'prisma': false,
-      }
-    }
-    return config
-  },
 }
 
 module.exports = nextConfig

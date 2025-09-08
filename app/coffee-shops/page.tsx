@@ -31,11 +31,7 @@ export default async function CoffeeShopsPage() {
     const results = await Promise.all([
       prisma.cafe.findMany({
         where: {
-          OR: [
-            { features: { has: 'Specialty Coffee' } },
-            { features: { has: 'Artisan Coffee' } },
-            { name: { contains: 'Coffee', mode: 'insensitive' } },
-          ],
+          name: { contains: 'Coffee', mode: 'insensitive' },
         },
         orderBy: [
           { rating: 'desc' },
@@ -45,21 +41,13 @@ export default async function CoffeeShopsPage() {
       }),
       prisma.cafe.count({
         where: {
-          OR: [
-            { features: { has: 'Specialty Coffee' } },
-            { features: { has: 'Artisan Coffee' } },
-            { name: { contains: 'Coffee', mode: 'insensitive' } },
-          ],
+          name: { contains: 'Coffee', mode: 'insensitive' },
         },
       }),
       prisma.cafe.groupBy({
         by: ['city'],
         where: {
-          OR: [
-            { features: { has: 'Specialty Coffee' } },
-            { features: { has: 'Artisan Coffee' } },
-            { name: { contains: 'Coffee', mode: 'insensitive' } },
-          ],
+          name: { contains: 'Coffee', mode: 'insensitive' },
         },
         _count: {
           city: true,
