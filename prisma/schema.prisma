@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,53 +8,34 @@ datasource db {
 }
 
 model Cafe {
-  id            String    @id @default(cuid())
-  name          String
-  slug          String    @unique
-  description   String?
-  
-  // Location data
-  address       String
-  city          String
-  area          String?
-  postcode      String
-  latitude      Float
-  longitude     Float
-  
-  // Contact information
-  phone         String?
-  website       String?
-  email         String?
-  
-  // Features and amenities (stored as comma-separated strings)
-  amenities     String    // e.g., "WiFi,Parking,Outdoor Seating"
-  features      String    // e.g., "Breakfast,Brunch,Vegan Options"
-  
-  // Opening hours stored as JSON String
-  openingHours  String?   // { "monday": { "open": "08:00", "close": "18:00" }, ... }
-  
-  // Additional information
-  priceRange    String?   // $, $$, $$$, $$$$
-  rating        Float?    @default(0)
-  reviewCount   Int       @default(0)
-  
-  // Images
-  thumbnail     String?
-  images        String    // Stored as a comma-separated list of URLs
-  
-  // SEO
-  metaTitle     String?
+  id              String     @id @default(cuid())
+  name            String
+  slug            String     @unique
+  description     String?
+  address         String
+  city            String
+  area            String?
+  postcode        String
+  latitude        Float
+  longitude       Float
+  phone           String?
+  website         String?
+  email           String?
+  amenities       String
+  features        String
+  openingHours    String?
+  priceRange      String?
+  rating          Float?     @default(0)
+  reviewCount     Int        @default(0)
+  thumbnail       String?
+  images          String
+  metaTitle       String?
   metaDescription String?
-  
-  // Timestamps
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relations
-  reviews       Review[]
-  favorites     Favorite[]
-  
-  // Indexes for better search performance
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  favorites       Favorite[]
+  reviews         Review[]
+
   @@index([postcode])
   @@index([city])
   @@index([area])
@@ -66,30 +44,26 @@ model Cafe {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  cafeId    String
-  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
-  
-  authorName String
+  id          String   @id @default(cuid())
+  cafeId      String
+  authorName  String
   authorEmail String?
-  rating    Int      // 1-5
-  comment   String?
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  cafe        Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
   @@index([cafeId])
 }
 
 model Favorite {
   id        String   @id @default(cuid())
   cafeId    String
-  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
-  
-  userId    String   // Can be localStorage ID or authenticated user ID
-  
+  userId    String
   createdAt DateTime @default(now())
-  
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
   @@unique([cafeId, userId])
   @@index([userId])
 }
@@ -97,11 +71,10 @@ model Favorite {
 model ImportLog {
   id          String   @id @default(cuid())
   filename    String
-  status      String   // success, partial, failed
+  status      String
   rowsTotal   Int
   rowsSuccess Int
   rowsFailed  Int
-  errors      String?  // Stored as a JSON string of error messages
-  
+  errors      String?
   createdAt   DateTime @default(now())
 }

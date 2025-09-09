@@ -30,22 +30,23 @@ interface Cafe {
   openingHours?: any
 }
 
+// These match the actual data in the database
 const AMENITY_OPTIONS = [
-  'WiFi',
-  'Parking',
-  'Outdoor Seating',
-  'Wheelchair Accessible',
-  'Dog Friendly',
-  'Power Outlets',
+  'Cafe',
+  'Coffee shop',
+  'Breakfast restaurant',
+  'Brunch restaurant',
+  'Lunch restaurant',
+  'Takeaway',
 ]
 
 const FEATURE_OPTIONS = [
-  'Breakfast',
-  'Brunch',
-  'Lunch',
-  'Vegan Options',
-  'Gluten Free',
-  'Organic Coffee',
+  'cafés',
+  'coffee shops',
+  'restaurants',
+  'Bakery',
+  'Deli',
+  'Tea house',
 ]
 
 export function SearchResults() {
