@@ -83,18 +83,34 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // Get cafes
-    const cafes = await prisma.cafe.findMany({
-      where,
-      take: limit * 2, // Get more to account for distance filtering
-      skip: offset,
-      orderBy: [
-        { rating: 'desc' },
-        { name: 'asc' },
-      ],
-    })
+    // Get all cafes matching the where clause for location-based filtering
+    // or get paginated results for non-location searches
+    let cafes: any[]
+    
+    if (!isNaN(lat) && !isNaN(lng)) {
+      // For location-based searches, get all cafes in the bounding box
+      // We'll filter by exact distance and paginate after
+      cafes = await prisma.cafe.findMany({
+        where,
+        orderBy: [
+          { rating: 'desc' },
+          { name: 'asc' },
+        ],
+      })
+    } else {
+      // For non-location searches, apply database-level pagination
+      cafes = await prisma.cafe.findMany({
+        where,
+        skip: offset,
+        take: limit,
+        orderBy: [
+          { rating: 'desc' },
+          { name: 'asc' },
+        ],
+      })
+    }
 
-    // Calculate distances and filter by radius
+    // Calculate distances and filter by radius for location-based searches
     if (!isNaN(lat) && !isNaN(lng)) {
       cafesWithDistance = cafes
         .map((cafe: any) => ({
@@ -106,6 +122,9 @@ export async function GET(request: NextRequest) {
         }))
         .filter((cafe: any) => cafe.distance <= radius)
         .sort((a: any, b: any) => a.distance - b.distance)
+      
+      // Apply pagination for location-based results
+      cafesWithDistance = cafesWithDistance.slice(offset, offset + limit)
     } else {
       cafesWithDistance = cafes.map((cafe: any) => ({ ...cafe, distance: null }))
     }
@@ -121,8 +140,8 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Apply limit
-    const results = cafesWithDistance.slice(0, limit)
+    // Results are already limited by pagination above
+    const results = cafesWithDistance
 
     // Get total count for pagination
     const totalCount = await prisma.cafe.count({ where })
