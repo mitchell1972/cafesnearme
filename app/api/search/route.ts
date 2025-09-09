@@ -115,8 +115,9 @@ export async function GET(request: NextRequest) {
       const { isOpenNow } = await import('@/lib/utils')
       cafesWithDistance = cafesWithDistance.filter((cafe: any) => {
         const openStatus = isOpenNow(cafe.openingHours)
-        // Only include cafes that are definitively open (not null/no data)
-        return openStatus === true
+        // Include cafes that are open OR have no opening hours data (null)
+        // This way we don't exclude cafes that simply don't have hours listed
+        return openStatus === true || openStatus === null
       })
     }
 

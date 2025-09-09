@@ -263,7 +263,7 @@ export function SearchResults() {
             {filters.openNow && (
               <p className="text-primary font-medium flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                Showing only cafes open now
+                Showing cafes open now (includes cafes without listed hours)
               </p>
             )}
           </div>
